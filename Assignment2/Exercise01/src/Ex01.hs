@@ -31,4 +31,13 @@ and reports the length of the prefix they have in common.
 
 -}
 commonLen :: Eq a => [a] -> [a] -> Int
-commonLen _ _ = error "commonLen not yet implemented"
+commonLen (x:xs) (y:ys) = commonLenHelper (x:xs) (y:ys) 0
+commonLen [] _ = 0
+commonLen _ [] = 0
+
+commonLenHelper :: Eq a => [a] -> [a] -> Int -> Int
+commonLenHelper (x:xs) (y:ys) c
+    | x == y = commonLenHelper xs ys (c+1)
+    | x /= y = c
+commonLenHelper [] _ c = c
+commonLenHelper _ [] c = c
