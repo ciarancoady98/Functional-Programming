@@ -41,15 +41,20 @@ v42 = Val 42 ; j42 = Just v42
   -- (2) the expression contains a variable not in the dictionary.
 
 eval :: EDict -> Expr -> Maybe Double
-eval _ (Val x) = Just x                
-eval [] e = Nothing
-
+eval _ (Val x) = Just x  
+eval [] e = Nothing              
 eval d (Var x) = find d x
 
-eval ((s,v) : ds) (Add (Val x) (Val y)) = Just (x + y)
+eval d (Add (Val x) (Val y)) = Just (x + y)
+         
+eval d (Add (Var x) (Val y)) = let 
+                                  z = (find d x)
+                                in if z == Nothing
+                                    then Nothing  
+                                    else a = (fromJust z)
+                                      Just (a + y)
 
-eval ((s,v) : ds) (Add (Var x) (Val y)) | x == s = Just (v + y)
-                                        | otherwise = eval ds (Add (Var x) (Val y))
+eval d (Add _ _) = Nothing
 
 eval _ (Dvd _ (Val 0.0)) = Nothing
 
@@ -78,13 +83,20 @@ There are many, many laws of algebra that apply to our expressions, e.g.,
 
 
 law1 :: Expr -> Maybe Expr
-law1 e = j42
+law1 (Add x y) = Just (Add y x)
+law1 _ = Nothing
 
 law2 :: Expr -> Maybe Expr
-law2 e = j42
+law2 (Add x (Add y z)) = Just (Add (Add x y) z)
+law2 _ = Nothing
 
 law3 :: Expr -> Maybe Expr
-law3 e = j42
+law3 (Sub x (Add y z)) = Just (Sub (Sub x y) z)
+law3 _ = Nothing
 
 law4 :: Expr -> Maybe Expr
-law4 e = j42
+law4 (Mul (Add x y) (Sub a b)) = 
+                                if x == a && y == b
+                                  then Just (Sub (Mul x x) (Mul y y))
+                                  else Nothing
+law4 _ = Nothing
