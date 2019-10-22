@@ -95,6 +95,20 @@ eval ((s,v):ds) (Mul (Var x) (Var y)) | x == s = eval ds (Mul (Val v) (Var y))
 eval d (Mul _ _) = Nothing
 
 
+
+eval ((s,v):ds) (Dvd (Var x) (Val y)) | x == s = eval [("Simplified",0.0)] (Dvd (Val v) (Val y))
+                                      | otherwise = eval ds (Dvd (Var x) (Val y))
+
+eval ((s,v):ds) (Dvd (Val x) (Var y)) | y == s = eval [("Simplified",0.0)] (Dvd (Val x) (Val v))
+                                      | otherwise = eval ds (Dvd (Val x) (Var y))
+
+eval ((s,v):ds) (Dvd (Var x) (Var y)) | x == s = eval ds (Dvd (Val v) (Var y))
+                                      | y == s = eval ds (Dvd (Var x) (Val v))
+                                      | otherwise = eval ds (Dvd (Var x) (Var y))
+
+eval d (Dvd _ _) = Nothing
+
+
 -- Part 2 : Expression Laws -- (15 test marks, worth 15 Exercise Marks) --------
 
 {-
