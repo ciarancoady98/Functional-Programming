@@ -43,10 +43,14 @@ v42 = Val 42 ; j42 = Just v42
 eval :: EDict -> Expr -> Maybe Double
 --Base Cases
 eval _ (Val x) = Just x 
-eval d (Add (Val x) (Val y)) = Just (x + y)
-eval d (Sub (Val x) (Val y)) = Just (x - y)
-eval [] e = Nothing              
+eval _ (Add (Val x) (Val y)) = Just (x + y)
+eval _ (Sub (Val x) (Val y)) = Just (x - y)
+eval _ (Mul (Val x) (Val y)) = Just (x * y)
+eval _ (Dvd _ (Val 0.0)) = Nothing
+eval _ (Dvd (Val x) (Val y)) = Just (x / y)
 eval d (Var x) = find d x
+eval [] e = Nothing              
+
 
 
          
@@ -76,7 +80,19 @@ eval ((s,v):ds) (Sub (Var x) (Var y)) | x == s = eval ds (Sub (Val v) (Var y))
 
 eval d (Sub _ _) = Nothing
 
-eval _ (Dvd _ (Val 0.0)) = Nothing
+
+
+eval ((s,v):ds) (Mul (Var x) (Val y)) | x == s = eval [("Simplified",0.0)] (Mul (Val v) (Val y))
+                                      | otherwise = eval ds (Mul (Var x) (Val y))
+
+eval ((s,v):ds) (Mul (Val x) (Var y)) | y == s = eval [("Simplified",0.0)] (Mul (Val x) (Val v))
+                                      | otherwise = eval ds (Mul (Val x) (Var y))
+
+eval ((s,v):ds) (Mul (Var x) (Var y)) | x == s = eval ds (Mul (Val v) (Var y))
+                                      | y == s = eval ds (Mul (Var x) (Val v))
+                                      | otherwise = eval ds (Mul (Var x) (Var y))
+
+eval d (Mul _ _) = Nothing
 
 
 -- Part 2 : Expression Laws -- (15 test marks, worth 15 Exercise Marks) --------
