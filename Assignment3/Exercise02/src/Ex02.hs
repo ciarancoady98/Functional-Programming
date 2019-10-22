@@ -48,6 +48,8 @@ eval _ (Sub (Val x) (Val y)) = Just (x - y)
 eval _ (Mul (Val x) (Val y)) = Just (x * y)
 eval _ (Dvd _ (Val 0.0)) = Nothing
 eval _ (Dvd (Val x) (Val y)) = Just (x / y)
+eval d (Def x (Val y) e2) = eval (define d x y) e2
+eval d (Def _ _ _) = Nothing
 eval d (Var x) = find d x
 eval [] e = Nothing              
 
