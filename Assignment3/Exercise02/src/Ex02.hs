@@ -41,11 +41,14 @@ v42 = Val 42 ; j42 = Just v42
   -- (2) the expression contains a variable not in the dictionary.
 
 eval :: EDict -> Expr -> Maybe Double
-eval _ (Val x) = Just x  
+--Base Cases
+eval _ (Val x) = Just x 
+eval d (Add (Val x) (Val y)) = Just (x + y)
+eval d (Sub (Val x) (Val y)) = Just (x - y)
 eval [] e = Nothing              
 eval d (Var x) = find d x
 
-eval d (Add (Val x) (Val y)) = Just (x + y)
+
          
 eval ((s,v):ds) (Add (Var x) (Val y)) | x == s = eval [("Simplified",0.0)] (Add (Val v) (Val y))
                                       | otherwise = eval ds (Add (Var x) (Val y))
@@ -58,6 +61,20 @@ eval ((s,v):ds) (Add (Var x) (Var y)) | x == s = eval ds (Add (Val v) (Var y))
                                       | otherwise = eval ds (Add (Var x) (Var y))
 
 eval d (Add _ _) = Nothing
+
+
+
+eval ((s,v):ds) (Sub (Var x) (Val y)) | x == s = eval [("Simplified",0.0)] (Sub (Val v) (Val y))
+                                      | otherwise = eval ds (Sub (Var x) (Val y))
+
+eval ((s,v):ds) (Sub (Val x) (Var y)) | y == s = eval [("Simplified",0.0)] (Sub (Val x) (Val v))
+                                      | otherwise = eval ds (Sub (Val x) (Var y))
+
+eval ((s,v):ds) (Sub (Var x) (Var y)) | x == s = eval ds (Sub (Val v) (Var y))
+                                      | y == s = eval ds (Sub (Var x) (Val v))
+                                      | otherwise = eval ds (Sub (Var x) (Var y))
+
+eval d (Sub _ _) = Nothing
 
 eval _ (Dvd _ (Val 0.0)) = Nothing
 
