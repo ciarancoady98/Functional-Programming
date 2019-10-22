@@ -47,12 +47,15 @@ eval d (Var x) = find d x
 
 eval d (Add (Val x) (Val y)) = Just (x + y)
          
-eval d (Add (Var x) (Val y)) = let 
-                                  z = (find d x)
-                                in if z == Nothing
-                                    then Nothing  
-                                    else a = (fromJust z)
-                                      Just (a + y)
+eval ((s,v):ds) (Add (Var x) (Val y)) | x == s = eval [("Simplified",0.0)] (Add (Val v) (Val y))
+                                      | otherwise = eval ds (Add (Var x) (Val y))
+
+eval ((s,v):ds) (Add (Val x) (Var y)) | y == s = eval [("Simplified",0.0)] (Add (Val x) (Val v))
+                                      | otherwise = eval ds (Add (Val x) (Var y))
+
+eval ((s,v):ds) (Add (Var x) (Var y)) | x == s = eval ds (Add (Val v) (Var y))
+                                      | y == s = eval ds (Add (Var x) (Val v))
+                                      | otherwise = eval ds (Add (Var x) (Var y))
 
 eval d (Add _ _) = Nothing
 
