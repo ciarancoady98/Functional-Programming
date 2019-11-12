@@ -46,4 +46,6 @@ assoc2bst ((x,y):xs) = insBST x y (assoc2bst xs)
 
 -- convert a binary search tree into an (ordered) association list
 bst2assoc :: Ord c =>  BT c e -> Assoc c e
-bst2assoc _ = error "bst2assoc not yet implemented"
+bst2assoc Leaf = []
+bst2assoc (Branch Leaf a b Leaf) = [(a,b)] 
+bst2assoc (Branch leftSubtree a b rightSubtree) = concat[bst2assoc leftSubtree, [(a,b)], bst2assoc rightSubtree]
