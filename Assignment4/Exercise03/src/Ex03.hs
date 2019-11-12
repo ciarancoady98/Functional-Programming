@@ -1,4 +1,4 @@
-{- butrfeld Andrew Butterfield -}
+{- ccoady Ciaran Coady -}
 module Ex03 where
 import Data.List ((\\))
 
@@ -27,8 +27,12 @@ lkpBST (Branch left k d right) k'
 
 -- insert into binary (search) tree
 insBST :: Ord a => a -> b -> BT a b -> BT a b
-insBST _ _ _  =  error "insBST not yet implmented"
-
+insBST a b Leaf = Branch Leaf a b Leaf
+insBST a b (Branch leftSubtree k d rightSubtree)
+    | a < k     = Branch (insBST a b leftSubtree) k d rightSubtree
+    | a > k     = Branch leftSubtree k d (insBST a b rightSubtree)
+    | otherwise = Branch leftSubtree a b rightSubtree
+                      
 -- Coding Part 2 (6 Marks)
 
 -- convert an association list to a binary search tree
