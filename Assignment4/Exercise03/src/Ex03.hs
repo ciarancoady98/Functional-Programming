@@ -37,7 +37,10 @@ insBST a b (Branch leftSubtree k d rightSubtree)
 
 -- convert an association list to a binary search tree
 assoc2bst :: Ord a => Assoc a b -> BT a b
-assoc2bst _ = error "assoc2bst not yet implemented"
+assoc2bst [] = Leaf
+assoc2bst [(x,y)] = insBST x y Leaf
+assoc2bst ((x,y):xs) = insBST x y (assoc2bst xs)
+
 
 -- Coding Part 3 (6 Marks)
 
