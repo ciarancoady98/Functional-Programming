@@ -48,4 +48,4 @@ assoc2bst ((x,y):xs) = insBST x y (assoc2bst xs)
 bst2assoc :: Ord c =>  BT c e -> Assoc c e
 bst2assoc Leaf = []
 bst2assoc (Branch Leaf a b Leaf) = [(a,b)] 
-bst2assoc (Branch leftSubtree a b rightSubtree) = concat[bst2assoc leftSubtree, [(a,b)], bst2assoc rightSubtree]
+bst2assoc (Branch leftSubtree a b rightSubtree) = bst2assoc leftSubtree ++ [(a,b)] ++ bst2assoc rightSubtree
