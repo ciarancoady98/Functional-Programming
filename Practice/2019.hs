@@ -29,12 +29,17 @@ mySpan p (x:xs) | p x = let (before, after) = mySpan p xs
               | otherwise = (!!!) xs (n-1)
 
 
-hof :: a -> (a -> a -> a) -> [a] -> a
-hof base function [] = base
-hof base function (x:xs) = function x (hof base function xs)
+hof :: a -> (a -> a) -> (a -> a -> a) -> [a] -> a
+hof base elementFunction mapFunction [] = base
+hof base elementFunction mapFunction (x:xs) = mapFunction (elementFunction x) (hof base elementFunction mapFunction xs)
 
 myMin :: Ord a => [a] -> a
 myMin [x] = x
 myMin (x:xs)    | x <= rest = x
                 | otherwise = rest
                 where rest = myMin xs
+
+myZip :: [a] -> [b] -> [(a,b)]
+myZip _ [] = []
+myZip [] _ = []
+myZip (x:xs) (y:ys) = (x,y) : myZip xs ys
